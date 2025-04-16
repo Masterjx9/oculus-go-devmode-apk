@@ -9,7 +9,7 @@
 
   <script>
     function launchIntent() {
-      window.location.href = "intent://#Intent;action=android.intent.action.SEND;type=text/plain;S.android.intent.extra.TEXT=http://test.com;S.android.intent.extra.SUBJECT=Test;end";
+      window.location.href = "intent://#Intent;action=android.intent.action.SEND;type=text/plain;S.android.intent.extra.TEXT=$arg_url;S.android.intent.extra.SUBJECT=$arg_text;S.browser_fallback_url=https://twitter.com/intent/tweet?text=$arg_text&url=$arg_url;end";
     }
   </script>
 </body>
