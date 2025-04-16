@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Launch Dev Settings</title>
+</head>
+<body>
+  <h1>Oculus Go Dev Settings Launcher</h1>
+  <button onclick="launchIntent()">Tap Here to Launch</button>
+
+  <script>
+    function launchIntent() {
+      window.location.href = "intent:#Intent;component=com.android.settings/.DevelopmentSettings;end";
+    }
+  </script>
+</body>
+</html>
