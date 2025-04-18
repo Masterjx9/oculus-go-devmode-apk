@@ -9,7 +9,9 @@
   <pre id="log">Preparing exploit...</pre>
   <script>
     const log = txt => document.getElementById('log').textContent += txt + "\n";
-
+    log("Starting exploit...");
+    log("Attempting to inject RWX shellcode into WASM module.");  
+    
     // Converts a hex string to a Uint8Array
     function hexToBytes(hex) {
       let bytes = new Uint8Array(hex.length / 2);
